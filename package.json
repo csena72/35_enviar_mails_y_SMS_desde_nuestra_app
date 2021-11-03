@@ -1,7 +1,7 @@
 {
-  "name": "35_enviar_mails_y_SMS_desde_nuestra_app",
+  "name": "35_enviar_mails_y_sms_desde_nuestra_app",
   "version": "1.0.0",
-  "description": "### >> Consigna:",
+  "description": "Desafío: Enviar mails y SMS desde nuestra app",
   "main": "index.js",
   "scripts": {
     "prod": "forever start src/server.js",
@@ -12,7 +12,6 @@
     "type": "git",
     "url": "git+https://github.com/csena72/35_enviar_mails_y_SMS_desde_nuestra_app.git"
   },
-  "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
@@ -44,4 +43,3 @@
     "nodemon": "^2.0.12"
   }
 }
-
