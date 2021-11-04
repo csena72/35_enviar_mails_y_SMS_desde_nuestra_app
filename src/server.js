@@ -21,6 +21,13 @@ const { Mongoose } = require("mongoose");
 const MongoStore = require("connect-mongo");
 
 //----------------------------------------------------------------------
+// NODEMAILER y TWILIO
+//----------------------------------------------------------------------
+import * as ethereal from './email/nodemailer-ethereal.js'
+import * as gmail from './email/nodemailer-gmail.js'
+import * as twilio from './sms/twilio.js'
+
+//----------------------------------------------------------------------
 // COMPRESIÓN
 //----------------------------------------------------------------------
 const compression = require('compression');
@@ -107,6 +114,7 @@ if (SERVER_MODE === "cluster" && cluster.isMaster) {
         profileFields: ["id", "displayName", "photos", "emails"],
       },
       function (accessToken, refreshToken, profile, done) {
+        console.log(profile);
         User.findOne(
           {
             facebookId: profile.id,
