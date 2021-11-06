@@ -1,14 +1,16 @@
-import nodemailer from 'nodemailer'
+const nodemailer = require('nodemailer');
 
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    service: 'smtp.gmail.com',
+    port:465,
+    secure: true,
     auth: {
-        user: '',
-        pass: ''
+        user: process.env.ACCOUNT_GMAIL,
+        pass: process.env.PASS_GMAIL
     }
 });
 
-export const enviarMail = (asunto,mensaje,adjunto,to,cb) => {
+exports.enviarMail = (asunto,mensaje,adjunto,to,cb) => {
     const mailOptions = {
         from: 'Servidor Node.js',
         to: to,

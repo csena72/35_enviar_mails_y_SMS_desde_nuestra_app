@@ -23,9 +23,9 @@ const MongoStore = require("connect-mongo");
 //----------------------------------------------------------------------
 // NODEMAILER y TWILIO
 //----------------------------------------------------------------------
-import * as ethereal from './email/nodemailer-ethereal.js'
-import * as gmail from './email/nodemailer-gmail.js'
-import * as twilio from './sms/twilio.js'
+const ethereal = require('./email/nodemailer-ethereal.js');
+const gmail  = require('./email/nodemailer-gmail.js');
+const twilio = require('./sms/twilio.js');
 
 //----------------------------------------------------------------------
 // COMPRESIÓN
@@ -303,6 +303,29 @@ if (SERVER_MODE === "cluster" && cluster.isMaster) {
 
   app.get("/home", async (req, res) => {
     if (req.isAuthenticated()) {
+
+      let nombre = req.user.displayName
+      let foto = req.user.photos[0].value
+      let email = req.user.emails[0].value
+      let asunto = 'logging In'
+      let mensaje = 'Ingresó ' + nombre + ' en la fecha ' + new Date().toLocaleString() 
+
+      //--------------------------------
+      //Registro de ingreso por ethereal
+      //--------------------------------
+      ethereal.enviarMail(asunto, mensaje, (err, info) => {
+        if(err) console.log(err)
+        else console.log(info)
+
+        //--------------------------------------
+        //Registro de datos de usuario por gmail
+        //--------------------------------------
+        gmail.enviarMail(asunto, mensaje, foto, email, (err, info) => {
+            if(err) console.log(err)
+            else console.log(info)
+        });
+      });
+
       productoService = new ProductoService();
       let productos = await productoService.getAllProductos();
       res.render("home", {
@@ -341,7 +364,17 @@ if (SERVER_MODE === "cluster" && cluster.isMaster) {
   app.get("/logout", (req, res) => {
     let nombre = req.user.username;
     req.logout();
-    res.render("logout", { nombre });
+    //-------------------------------
+    //Registro de egreso por ethereal
+    //-------------------------------
+    let asunto = 'logging Out'
+    let mensaje = 'Egresó ' + nombre + ' en la fecha ' + new Date().toLocaleString() 
+    ethereal.enviarMail(asunto, mensaje, (err, info) => {
+        if(err) console.log(err)
+        else console.log(info)
+
+        res.render("logout", { nombre });
+    });
   });
 
   // ------------------------------------------------------------------------------
@@ -366,6 +399,13 @@ if (SERVER_MODE === "cluster" && cluster.isMaster) {
       };
 
       await mensajeService.createMensaje(elNuevoMensaje);
+
+      if(data.text.includes('administrador')) {
+        console.log('MENSAJE SMS AL ADMIN')
+        let mensaje = 'El usuario ' + data.author.email + ' te envió el mensaje: ' + data.text
+        let rta = await twilio.enviarSMS(mensaje, '+54911nnnnnnnn')
+        console.log(rta)
+      }
 
       io.sockets.emit("recibir nuevoMensaje", [elNuevoMensaje]);
     });

@@ -1,15 +1,15 @@
-import nodemailer from 'nodemailer'
+const nodemailer = require('nodemailer');
 
 const transporter = nodemailer.createTransport({
     host: 'smtp.ethereal.email',
     port: 587,
     auth: {
-        user: '',
-        pass: ''
+        user: 'reece.king73@ethereal.email',
+        pass: '4n7DCvMu6tN84P4thk'
     }
 });
 
-export const enviarMail = (asunto,mensaje,cb) => {
+exports.enviarMail = (asunto,mensaje,cb) => {
     const mailOptions = {
         from: 'Servidor Node.js',
         to: '',

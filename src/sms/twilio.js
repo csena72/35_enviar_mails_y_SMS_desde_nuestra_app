@@ -1,11 +1,11 @@
-const accountSid = '';
-const authToken = '';
+const accountSid = process.env.ACCOUNT_TWILIO_SID;
+const authToken = process.env.TWILIO_AUTH_TOKEN;
 
-import twilio from 'twilio'
+const twilio = require('twilio');
 
 const client = twilio(accountSid, authToken)
 
-export const enviarSMS = async (mensaje,numero) => {
+exports.enviarSMS = async (mensaje,numero) => {
     try {
         let rta = await client.messages.create({
             body: mensaje,
